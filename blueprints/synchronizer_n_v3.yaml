@@ -1,0 +1,93 @@
+blueprint:
+  name: Synchronizer N V3
+  description: Synchronize the state of two entities.
+  domain: automation
+  input:
+    entity_1:
+      name: First entity
+      selector:
+        entity: {}
+    entity_2:
+      name: Second entity
+      selector:
+        entity: {}
+mode: restart
+max_exceeded: silent
+variables:
+  entity_1: !input entity_1
+  entity_2: !input entity_2
+
+trigger:
+- platform: state
+  entity_id: !input entity_1
+  to: 'on'
+  id: '!input entity_1 ON'
+- platform: state
+  entity_id: !input entity_1
+  to: 'off'
+  id: '!input entity_1 OFF'
+- platform: state
+  entity_id: !input entity_2
+  to: 'on'
+  id: '!input entity_2 ON'
+- platform: state
+  entity_id: !input entity_2
+  to: 'off'
+  id: '!input entity_2 OFF'
+
+condition: []
+
+action:
+- if: 
+  - condition: and
+    conditions: 
+    - condition: trigger
+      id: '!input entity_1 ON'
+    - condition: state
+      entity_id: !input entity_2
+      state: 'off'
+  then:
+  - service: homeassistant.turn_on
+    data: {}
+    target:
+      entity_id: !input entity_2
+- if: 
+  - condition: and
+    conditions: 
+    - condition: trigger
+      id: '!input entity_1 OFF'
+    - condition: state
+      entity_id: !input entity_2
+      state: 'on'
+  then:
+  - service: homeassistant.turn_off
+    data: {}
+    target:
+      entity_id: !input entity_2
+- if: 
+  - condition: and
+    conditions: 
+    - condition: trigger
+      id: '!input entity_2 ON'
+    - condition: state
+      entity_id: !input entity_1
+      state: 'off'
+  then:
+  - service: homeassistant.turn_on
+    data: {}
+    target:
+      entity_id: !input entity_1
+- if: 
+  - condition: and
+    conditions: 
+    - condition: trigger
+      id: '!input entity_2 OFF'
+    - condition: state
+      entity_id: !input entity_1
+      state: 'on'
+  then:
+  - service: homeassistant.turn_off
+    data: {}
+    target:
+      entity_id: !input entity_1
+      
