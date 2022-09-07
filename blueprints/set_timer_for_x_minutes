@@ -13,7 +13,7 @@ blueprint:
       selector:
         number:
           min: 1.0
-          max: 1440.0
+          max: 720.0
           unit_of_measurement: min
           mode: slider
           step: 1.0
