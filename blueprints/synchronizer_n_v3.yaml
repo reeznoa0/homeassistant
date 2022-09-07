@@ -16,7 +16,7 @@ max_exceeded: silent
 variables:
   entity_1: !input entity_1
   entity_2: !input entity_2
-
+  
 trigger:
 - platform: state
   entity_id: !input entity_1
@@ -34,9 +34,7 @@ trigger:
   entity_id: !input entity_2
   to: 'off'
   id: '!input entity_2 OFF'
-
 condition: []
-
 action:
 - if: 
   - condition: and
@@ -89,5 +87,4 @@ action:
   - service: homeassistant.turn_off
     data: {}
     target:
-      entity_id: !input entity_1
-      
+      entity_id: !input entity_1    
