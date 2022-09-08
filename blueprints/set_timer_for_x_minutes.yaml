@@ -17,7 +17,7 @@ blueprint:
           unit_of_measurement: min
           mode: slider
           step: 1.0
-mode: single
+mode: restart
 max_exceeded: silent
   
 trigger:
