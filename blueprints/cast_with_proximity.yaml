@@ -1,0 +1,108 @@
+blueprint:
+  name: Cast with Proximity
+  description: Cast and uncast lovelace to nesthub with proximity sensor.
+  domain: automation
+  input:
+    entity_1:
+      name: Select your proximity sensor
+      selector:
+        entity: {}
+    entity_2:
+      name: Select your Nest Hub
+      selector:
+        entity: {}
+    script_1:
+      name: Select your script
+      selector:
+        entity: {}
+    time_1:
+      name: Set time to uncast after LEAVE 
+      default: 5
+      selector:
+        number:
+          min: 1.0
+          max: 100.0
+          unit_of_measurement: min
+          mode: slider
+          step: 1.0
+    time_2:
+      name: Set time to uncast after AWAY 
+      default: 5
+      selector:
+        number:
+          min: 1.0
+          max: 100.0
+          unit_of_measurement: min
+          mode: slider
+          step: 1.0
+mode: single
+max_exceeded: silent
+variables:
+  entity_1: !input entity_1
+  entity_2: !input entity_2
+  script_1: !input script_1
+  time_1: !input time_1
+  time_2: !input time_2
+  
+trigger:
+- platform: state
+  entity_id: !input entity_1
+  to: 'approach'
+  attribute: presence_event
+- platform: state
+  entity_id: !input entity_1
+  to: 'leave'
+  for:
+    minutes: !input time_1
+  attribute: presence_event
+- platform: state
+  entity_id: !input entity_1
+  to: 'away'
+  for:
+    minutes: !input time_2
+  attribute: presence_event
+condition: []
+action:
+- if:
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: !input entity_2
+      state: 'off'
+    - condition: state
+      entity_id: !input entity_1
+      state: 'approach'
+      attribute: presence_event
+  then:
+  - service: !input script_1
+    data: {}
+- if:
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: !input entity_2
+      state: 'playing'
+    - condition: state
+      entity_id: !input entity_1
+      state: 'leave'
+      attribute: presence_event
+  then:
+  - service: media_player.turn_off
+    data: {}
+    target:
+      entity_id: !input entity_2
+- if:
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: !input entity_2
+      state: 'playing'
+    - condition: state
+      entity_id: !input entity_1
+      state: 'away'
+      attribute: presence_event
+  then:
+  - service: media_player.turn_off
+    data: {}
+    target:
+      entity_id: !input entity_2
