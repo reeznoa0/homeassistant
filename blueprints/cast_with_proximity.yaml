@@ -16,6 +16,16 @@ blueprint:
       selector:
         entity: {}
     time_1:
+      name: Set time to cast after APPROACH 
+      default: 0
+      selector:
+        number:
+          min: 0.0
+          max: 100.0
+          unit_of_measurement: sec
+          mode: slider
+          step: 1.0
+    time_2:
       name: Set time to uncast after LEAVE 
       default: 5
       selector:
@@ -25,7 +35,7 @@ blueprint:
           unit_of_measurement: min
           mode: slider
           step: 1.0
-    time_2:
+    time_3:
       name: Set time to uncast after AWAY 
       default: 5
       selector:
@@ -43,23 +53,26 @@ variables:
   script_1: !input script_1
   time_1: !input time_1
   time_2: !input time_2
+  time_3: !input time_3
   
 trigger:
 - platform: state
   entity_id: !input entity_1
   to: 'approach'
+  for:
+    seconds: !input time_1
   attribute: presence_event
 - platform: state
   entity_id: !input entity_1
   to: 'leave'
   for:
-    minutes: !input time_1
+    minutes: !input time_2
   attribute: presence_event
 - platform: state
   entity_id: !input entity_1
   to: 'away'
   for:
-    minutes: !input time_2
+    minutes: !input time_3
   attribute: presence_event
 condition: []
 action:
